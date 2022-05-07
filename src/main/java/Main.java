@@ -12,18 +12,31 @@ public class Main {
         // создаём конфиг
         LinksSuggester linksSuggester = new LinksSuggester(new File("data/config"));
 
-        var dir = new File("data/pdfs");
-        for (var fileIn : dir.listFiles()) {
-            System.out.println(fileIn);
-        }
+        //   var dir = new File("data/pdfs");
+        //   for (var fileIn : dir.listFiles()) {
+        //       System.out.println(fileIn);
+        //   }
 
 
         var fileIn = new File("data/pdfs/Проба.pdf");
-        var fileOut = new File("data/pdfs/Проба.pdf");
-        var doc = new PdfDocument(new PdfReader(new FileInputStream(fileIn)), new PdfWriter(new FileOutputStream(fileOut)));
-        var page1 = doc.getPage(1);
-        var text = PdfTextExtractor.getTextFromPage(page1);
-        System.out.println(text);
+        var fileOut = new File("data/converted/Проба.pdf");
+
+
+        var pdfReader = new PdfReader(fileIn);
+        var pdfWriter = new PdfWriter(fileOut);
+
+        var doc = new PdfDocument(pdfReader, pdfWriter);
+
+        int numberOfPages = doc.getNumberOfPages();
+        for (int i = 1; i <= numberOfPages; i++) {
+            var page = doc.getPage(i);
+            var text = PdfTextExtractor.getTextFromPage(page);
+         //   System.out.println(text);
+        }
+
+        var newPage = doc.addNewPage(2);
+
+        doc.close();
 
         // перебираем пдфки в data/pdfs
 
