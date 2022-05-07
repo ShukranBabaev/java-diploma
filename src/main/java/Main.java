@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+       // System.out.println();
         // создаём конфиг
         LinksSuggester linksSuggester = new LinksSuggester(new File("data/config"));
 
