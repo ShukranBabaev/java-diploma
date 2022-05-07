@@ -3,6 +3,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class LinksSuggester {
 
@@ -12,13 +13,13 @@ public class LinksSuggester {
 
         suggests = new ArrayList<>();
 
-        var text = FileUtils.readFileToString(file);
-        String[] lines = text.split("\n");
+        var configText = FileUtils.readFileToString(file);
+        String[] lines = configText.split("\n");
 
-        for (int i = 0; i < lines.length; i++){
+        for (int i = 0; i < lines.length; i++) {
             String[] line = lines[i].split("\t");
 
-            if (line.length != 3){
+            if (line.length != 3) {
                 throw new WrongLinksFormatException(" Не правильный конфиг");
 
             }
@@ -28,13 +29,23 @@ public class LinksSuggester {
             var suggest = new Suggest(keyWord, title, url);
 
             suggests.add(suggest);
-            System.out.println(suggest);
         }
 
 
     }
 
+    // Метод принимает текст, пробегается по всем рекомендациям из конфига и возвращает подходящие рекомендации.
     public List<Suggest> suggest(String text) {
-        return null;
+
+        var resolt = new ArrayList<Suggest>();
+
+        for (int i = 0; i < suggests.size(); i++) {
+            var suggest = suggests.get(i);
+            if (text.toLowerCase().contains(suggest.getKeyWord().toLowerCase())) {
+                resolt.add(suggest);
+            }
+        }
+        return resolt;
+
     }
 }
