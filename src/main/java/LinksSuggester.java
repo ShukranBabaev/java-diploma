@@ -13,7 +13,7 @@ public class LinksSuggester {
 
         suggests = new ArrayList<>();
 
-        var configText = FileUtils.readFileToString(file);
+        var configText = FileUtils.readFileToString(file); //FileUtils - дает возможность считывать текстовый файл
         String[] lines = configText.split("\n");
 
         for (int i = 0; i < lines.length; i++) {

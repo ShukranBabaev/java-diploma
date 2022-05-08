@@ -45,20 +45,30 @@ public class Main {
 
             if (recomendasions.size() > 0) {
                 var newPage = doc.addNewPage(i + 1);
+                numberOfPages = numberOfPages + 1;
+                i = i + 1;
 
-                var rect = new Rectangle(newPage.getPageSize()).moveRight(10).moveDown(10);
-                Canvas canvas = new Canvas(newPage, rect);
+                var rect = new Rectangle(newPage.getPageSize()).moveRight(10).moveDown(10); //Создали прямоугольник в новой странице
+                Canvas canvas = new Canvas(newPage, rect); //Создали холст - добавляем туда новую страницу и прямоугольник
                 Paragraph paragraph = new Paragraph("Suggestions:\n");
-                paragraph.setFontSize(25);
+                paragraph.setFontSize(25); // указали размер шрифта
 // сюда вставтье логика добавления нужных ссылок
-                canvas.add(paragraph);
 
-                PdfLinkAnnotation annotation = new PdfLinkAnnotation(rect);
-                PdfAction action = PdfAction.createURI(recomendasions.get(0).getUrl());
-                annotation.setAction(action);
-                Link link = new Link(recomendasions.get(0).getTitle(), annotation);
-                paragraph.add(link.setUnderline());
-                paragraph.add("\n");
+                for(int j = 0; j < recomendasions.size(); j ++) {
+
+
+                    PdfLinkAnnotation annotation = new PdfLinkAnnotation(rect);
+                    PdfAction action = PdfAction.createURI(recomendasions.get(j).getUrl()); //Создали ссылку
+                    annotation.setAction(action); //Добавили ссылку
+                    Link link = new Link(recomendasions.get(j).getTitle(), annotation); //Текст который дает нам возможность перейти по ссылке
+                    paragraph.add(link.setUnderline()); // Добавляем ссылку в параграф
+                    paragraph.add("\n"); //Добавляем новую строчку
+
+                    canvas.add(paragraph); //Параграф добавляем в холст
+                }
+                canvas.close();
+
+
 
             }
         }
