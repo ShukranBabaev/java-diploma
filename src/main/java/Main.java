@@ -13,7 +13,7 @@ import com.itextpdf.layout.element.Paragraph;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
+import java.util.HashSet;
 
 
 public class Main {
@@ -39,11 +39,12 @@ public class Main {
 
         int numberOfPages = doc.getNumberOfPages();
         for (int i = 1; i <= numberOfPages; i++) {
+            var recomendasionsSet = new HashSet<Suggest>();
             var page = doc.getPage(i);
             var text = PdfTextExtractor.getTextFromPage(page);
             var recomendasions = linksSuggester.suggest(text);
 
-            if (recomendasions.size() > 0) {
+            if (recomendasions.size() > 0 && !recomendasionsSet.containsAll(recomendasions)) {
                 var newPage = doc.addNewPage(i + 1);
                 numberOfPages = numberOfPages + 1;
                 i = i + 1;
@@ -56,16 +57,19 @@ public class Main {
 
                 for(int j = 0; j < recomendasions.size(); j ++) {
 
+                    if (!recomendasionsSet.contains(recomendasions.get(j))) {
+                        PdfLinkAnnotation annotation = new PdfLinkAnnotation(rect);
+                        PdfAction action = PdfAction.createURI(recomendasions.get(j).getUrl()); //Создали ссылку
+                        annotation.setAction(action); //Добавили ссылку
+                        Link link = new Link(recomendasions.get(j).getTitle(), annotation); //Текст который дает нам возможность перейти по ссылке
+                        paragraph.add(link.setUnderline()); // Добавляем ссылку в параграф
+                        paragraph.add("\n"); //Добавляем новую строчку
+                    }
 
-                    PdfLinkAnnotation annotation = new PdfLinkAnnotation(rect);
-                    PdfAction action = PdfAction.createURI(recomendasions.get(j).getUrl()); //Создали ссылку
-                    annotation.setAction(action); //Добавили ссылку
-                    Link link = new Link(recomendasions.get(j).getTitle(), annotation); //Текст который дает нам возможность перейти по ссылке
-                    paragraph.add(link.setUnderline()); // Добавляем ссылку в параграф
-                    paragraph.add("\n"); //Добавляем новую строчку
 
-                    canvas.add(paragraph); //Параграф добавляем в холст
                 }
+                recomendasionsSet.addAll(recomendasions);
+                canvas.add(paragraph); //Параграф добавляем в холст
                 canvas.close();
 
 
